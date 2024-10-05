@@ -12,3 +12,6 @@ func ProtectedRoute() gin.RouterGroup {
 
 	return *route
 }
+
+type Empty struct {
+}
