@@ -1,10 +1,10 @@
 package config
 
 import (
-	"event-driven-webhook/utils"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
 	"os"
 )
 
@@ -19,7 +19,9 @@ func ConnectDatabase() {
 
 	var err error
 	DB, err = gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
-	utils.CheckErr(err, true)
+	if err != nil {
+		log.Fatalln("Cannot connect to database")
+	}
 
 	fmt.Println("Database connected")
 }
