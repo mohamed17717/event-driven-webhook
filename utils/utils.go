@@ -1,21 +1,14 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/joho/godotenv"
+	"log"
 )
-
-func CheckErr(err error, isPanic bool) {
-	if err != nil {
-		if isPanic {
-			panic(err)
-		}
-		fmt.Println(err)
-	}
-}
 
 func LoadEnv() {
 	// load .env file
 	err := godotenv.Load(".env")
-	CheckErr(err, false)
+	if err != nil {
+		log.Fatalln("Error loading .env file")
+	}
 }
