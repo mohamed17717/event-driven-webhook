@@ -18,6 +18,10 @@ func main() {
 
 	apis.AuthRoutes()
 	apis.ActionRoutes()
+	apis.SubscriberRoutes()
+	apis.UserConfigurationRoutes()
+	apis.WebhookLogRoutes()
+	apis.SubscriberActionRoutes()
 
 	// Start the Gin server
 	config.Server.Run()
