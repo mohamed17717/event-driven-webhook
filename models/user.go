@@ -2,6 +2,7 @@ package models
 
 import (
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -16,7 +17,6 @@ type User struct {
 	UpdatedAt time.Time `gorm:"default:current_timestamp"`
 }
 
-// Method to hash password
 func (user *User) HashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
@@ -26,7 +26,15 @@ func (user *User) HashPassword(password string) error {
 	return nil
 }
 
-// Method to compare password
 func (user *User) CheckPassword(providedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(providedPassword))
+}
+
+func (user *User) AfterCreate(tx *gorm.DB) (err error) {
+	// Create the profile after the user is created
+	configuration := UserConfiguration{
+		UserID: user.ID,
+	}
+	err = tx.Create(&configuration).Error
+	return err
 }
