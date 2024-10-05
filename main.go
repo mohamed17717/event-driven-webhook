@@ -22,7 +22,7 @@ func main() {
 	apis.UserConfigurationRoutes()
 	apis.WebhookLogRoutes()
 	apis.SubscriberActionRoutes()
-
+	apis.ChangeRoutes()
 	// Start the Gin server
 	config.Server.Run()
 
