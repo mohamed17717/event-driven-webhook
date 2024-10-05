@@ -37,6 +37,6 @@ func UserConfigurationRoutes() {
 		InputOfUpdateToModel: InputToUserConf,
 	}
 
-	protected.GET("/actions/:id", userConfigurationViewSet.Retrieve)
-	protected.PUT("/actions/:id", userConfigurationViewSet.Update)
+	protected.GET("/user-configuration/:id", userConfigurationViewSet.Retrieve)
+	protected.PUT("/user-configuration/:id", userConfigurationViewSet.Update)
 }

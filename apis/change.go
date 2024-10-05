@@ -39,6 +39,6 @@ func ChangeRoutes() {
 		InputOfCreateToModel: InputToChange,
 	}
 
-	protected.POST("/actions", changeViewSet.Create)
-	protected.GET("/actions", changeViewSet.List)
+	protected.POST("/changes", changeViewSet.Create)
+	protected.GET("/changes", changeViewSet.List)
 }
