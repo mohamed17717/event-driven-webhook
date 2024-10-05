@@ -16,6 +16,6 @@ func CheckErr(err error, isPanic bool) {
 
 func LoadEnv() {
 	// load .env file
-	err := godotenv.Load("app.env")
+	err := godotenv.Load(".env")
 	CheckErr(err, false)
 }
