@@ -1,7 +1,21 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/joho/godotenv"
+)
 
-func Test() {
-	fmt.Println("Test is running successfully")
+func CheckErr(err error, isPanic bool) {
+	if err != nil {
+		if isPanic {
+			panic(err)
+		}
+		fmt.Println(err)
+	}
+}
+
+func LoadEnv() {
+	// load .env file
+	err := godotenv.Load("app.env")
+	CheckErr(err, false)
 }
