@@ -1,1 +1,6 @@
-package event_driven_webhook
+package main
+
+func main() {
+	loadEnv()
+	connectToDB()
+}
