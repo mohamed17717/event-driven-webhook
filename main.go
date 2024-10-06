@@ -15,6 +15,7 @@ func main() {
 		&models.Action{}, &models.Subscriber{}, &models.SubscriberAction{},
 		&models.Change{}, &models.WebhookLog{},
 	)
+	config.ConnectToRabbitMQ()
 
 	apis.AuthRoutes()
 	apis.ActionRoutes()
