@@ -16,6 +16,7 @@ func main() {
 		&models.Change{}, &models.WebhookLog{},
 	)
 	config.ConnectToRabbitMQ()
+	config.ConnectToRedis()
 
 	apis.AuthRoutes()
 	apis.ActionRoutes()
