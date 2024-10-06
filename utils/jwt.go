@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -24,7 +24,7 @@ func (j JwtTokenStruct) Parse(tokenString string) (*jwt.Token, error) {
 	})
 
 	if err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println(err.Error())
 		return token, err
 	}
 
