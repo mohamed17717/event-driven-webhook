@@ -3,6 +3,7 @@ package main
 import (
 	"event-driven-webhook/apis"
 	"event-driven-webhook/config"
+	"event-driven-webhook/consumers"
 	"event-driven-webhook/models"
 	"event-driven-webhook/utils"
 )
@@ -17,6 +18,9 @@ func main() {
 	)
 	config.ConnectToRabbitMQ()
 	config.ConnectToRedis()
+
+	go consumers.ConsumeChanges()
+	go consumers.ConsumeNotifySubscribers()
 
 	apis.AuthRoutes()
 	apis.ActionRoutes()
