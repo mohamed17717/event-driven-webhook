@@ -1,9 +1,11 @@
 package apis
 
 import (
+	"encoding/json"
 	"event-driven-webhook/config"
 	"event-driven-webhook/models"
 	"event-driven-webhook/viewsets"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -33,12 +35,28 @@ func InputToChange(data *CreateChangeInput) models.Change {
 func ChangeRoutes() {
 	protected := ProtectedRoute()
 
-	changeViewSet := viewsets.ViewSet[models.Change, CreateChangeInput, Empty]{
+	var changeViewSet = viewsets.ViewSet[models.Change, CreateChangeInput, Empty]{
 		DB:                   config.DB,
 		PerformCreateFunc:    CustomChangeCreate,
 		InputOfCreateToModel: InputToChange,
 	}
 
-	protected.POST("/changes", changeViewSet.Create)
+	creatChange := func(c *gin.Context) {
+		//just normal create
+		changeViewSet.Create(c)
+		// Publish change to rabbit mq
+		var data CreateChangeInput
+		c.ShouldBindJSON(&data)
+
+		bytesData, err := json.Marshal(data)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		config.MQPublishChange(string(bytesData))
+	}
+
+	protected.POST("/changes", creatChange)
 	protected.GET("/changes", changeViewSet.List)
 }
