@@ -16,6 +16,7 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/?sslmode=disable
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/nxt?sslmode=disable
       JWT_SECRET: myJWTSecretIsSuperHard
+      REDIS_URL: redis:6379
     networks:
       - app-network
 
