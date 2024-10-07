@@ -2,7 +2,7 @@ package config
 
 import (
 	"context"
-	"fmt"
+	"event-driven-webhook/utils"
 	"github.com/go-redis/redis/v8"
 	"os"
 )
@@ -23,16 +23,12 @@ func ConnectToRedis() {
 
 func RedisSet(key string, value string) {
 	err := rdb.Set(ctx, key, value, 0).Err()
-	if err != nil {
-		fmt.Printf("Could not set key: %v\n", err)
-	}
+	utils.LogOnError(err, "Could not set key: %v")
 }
 
 func RedisGet(key string) string {
 	val, err := rdb.Get(ctx, key).Result()
-	if err != nil {
-		fmt.Printf("Could not get key: %v\n", err)
-	}
+	utils.LogOnError(err, "Could not get key: %v")
 
 	return val
 }

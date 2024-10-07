@@ -1,6 +1,7 @@
 package models
 
 import (
+	"event-driven-webhook/utils"
 	"gorm.io/gorm"
 	"time"
 )
@@ -25,9 +26,8 @@ func CreateBulkActionsForOneSubscriber(db *gorm.DB, subscriberID uint, actionIDs
 	}
 
 	// Perform the bulk insert
-	if err := db.Create(&subscriberActions).Error; err != nil {
-		return err
-	}
+	err := db.Create(&subscriberActions).Error
+	utils.LogOnError(err, "Cannot insert in bulk")
 
 	return nil
 }
@@ -44,9 +44,8 @@ func CreateBulkSubscribersForOneAction(db *gorm.DB, actionID uint, subscriberIDs
 	}
 
 	// Perform the bulk insert
-	if err := db.Create(&subscriberActions).Error; err != nil {
-		return err
-	}
+	err := db.Create(&subscriberActions).Error
+	utils.LogOnError(err, "Cannot insert bulk")
 
 	return nil
 }

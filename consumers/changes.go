@@ -9,24 +9,11 @@ import (
 )
 
 func ConsumeChanges() {
-	msgs, err := config.CHANNEL.Consume(
-		config.QUEUE_CHANGES, // queue
-		"",                   // consumer
-		true,                 // auto-ack
-		false,                // exclusive
-		false,                // no-local
-		false,                // no-wait
-		nil,                  // arguments
-	)
-
-	if err != nil {
-		fmt.Printf("Error consuming from queue: %s\n", err)
-	}
-
+	consumeMsgs := config.CreateConsumer(config.QUEUE_CHANGES)
 	forever := make(chan bool)
 
 	go func() {
-		for d := range msgs {
+		for d := range consumeMsgs {
 			taskData := string(d.Body)
 			fmt.Printf(" [x] Received %s", taskData)
 

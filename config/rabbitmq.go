@@ -1,9 +1,9 @@
 package config
 
 import (
-	"fmt"
+	"errors"
+	"event-driven-webhook/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"log"
 	"os"
 )
 
@@ -12,12 +12,6 @@ var CHANNEL *amqp.Channel
 var QUEUE_CHANGES = "changes"
 var QUEUE_NOTIFY_SUBSCRIBERS = "notify_subscribers"
 var QUEUE_WEBHOOK_FAILURE = "webhook_failure"
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
-}
 
 func createQueue(name string) (amqp.Queue, error) {
 	return CHANNEL.QueueDeclare(
@@ -32,14 +26,14 @@ func createQueue(name string) (amqp.Queue, error) {
 
 func publish(queue, msg string) error {
 	return CHANNEL.Publish(
-		"",    // exchange
-		queue, // queue name
-		false, // mandatory
-		false, // immediate
+		"",
+		queue,
+		false,
+		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(msg),
-		}, // message to publish
+		},
 	)
 }
 
@@ -55,27 +49,38 @@ func MQPublishWebhookFailure(msg string) error {
 	return publish(QUEUE_WEBHOOK_FAILURE, msg)
 }
 
-func ConnectToRabbitMQ() {
-	rabbitMqUrl := os.Getenv("RABBITMQ_URL")
-	if rabbitMqUrl == "" {
-		fmt.Println("RABBITMQ_URL not set")
-		return
-	}
+func CreateConsumer(queueName string) <-chan amqp.Delivery {
+	msgs, err := CHANNEL.Consume(
+		queueName, // queue
+		"",        // consumer
+		true,      // auto-ack
+		false,     // exclusive
+		false,     // no-local
+		false,     // no-wait
+		nil,       // arguments
+	)
+	utils.LogOnError(err, "Failed to register a consumer")
+	return msgs
+}
 
+func ConnectToRabbitMQ() {
 	var err error
 
+	rabbitMqUrl := os.Getenv("RABBITMQ_URL")
+	utils.FailOnError(errors.New("missed env variables"), "RABBITMQ_URL not set")
+
 	AMQP, err = amqp.Dial(rabbitMqUrl)
-	failOnError(err, "Failed to connect to RabbitMQ")
+	utils.FailOnError(err, "Failed to connect to RabbitMQ")
 
 	CHANNEL, err = AMQP.Channel()
-	failOnError(err, "Failed to open a channel")
+	utils.FailOnError(err, "Failed to open a channel")
 
 	_, err = createQueue(QUEUE_CHANGES)
-	failOnError(err, "Failed to create queue")
+	utils.FailOnError(err, "Failed to create queue")
 
 	_, err = createQueue(QUEUE_NOTIFY_SUBSCRIBERS)
-	failOnError(err, "Failed to create queue")
+	utils.FailOnError(err, "Failed to create queue")
 
 	_, err = createQueue(QUEUE_WEBHOOK_FAILURE)
-	failOnError(err, "Failed to create queue")
+	utils.FailOnError(err, "Failed to create queue")
 }

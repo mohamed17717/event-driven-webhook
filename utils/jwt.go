@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"os"
@@ -23,11 +22,7 @@ func (j JwtTokenStruct) Parse(tokenString string) (*jwt.Token, error) {
 		return j.jwtSecret, nil
 	})
 
-	if err != nil {
-		fmt.Println(err.Error())
-		return token, err
-	}
-
+	LogOnError(err, "Error parsing token")
 	return token, err
 }
 
